@@ -7,7 +7,6 @@ public class BotMovement : MonoBehaviour
 {
     [SerializeField] private float _speed;
     [SerializeField] private CatchResource _catchResource;
-    [SerializeField] private Destroy _destroy;
 
     public Resourse Resourse;
     private Transform _target;
@@ -16,9 +15,28 @@ public class BotMovement : MonoBehaviour
 
     public bool IsFree { get; private set; } = true;
 
+    private void OnEnable()
+    {
+        _catchResource.Ñatch += ApplyTaget;
+    }
+
+    private void OnDisable()
+    {
+        _catchResource.Ñatch -= ApplyTaget;
+    }
+
+    private void Update()
+    {
+        if (_isMove)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _target.transform.position, _speed * Time.deltaTime);
+        }
+    }
+
     public void SetFree()
     {
         IsFree = true;
+        Destroy(Resourse.gameObject);
     }
 
     public void ResetFree()
@@ -28,34 +46,9 @@ public class BotMovement : MonoBehaviour
 
     public void ApplyTaget(Transform target)
     {
-        if (target == null)
-        {
-            return;
-        }
-
         _target = target;
         _isMove = true;
 
         ResetFree();
-    }
-
-    private void OnEnable()
-    {
-        _catchResource.Ñatch += ApplyTaget;
-        _destroy.DestroyResourse += SetFree;
-    }
-
-    private void OnDisable()
-    {
-        _catchResource.Ñatch -= ApplyTaget;
-        _destroy.DestroyResourse += SetFree;
-    }
-
-    private void Update()
-    {
-        if (_isMove)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, _target.transform.position, _speed * Time.deltaTime);
-        }
     }
 }

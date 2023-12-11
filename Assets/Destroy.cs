@@ -5,14 +5,13 @@ using UnityEngine.Events;
 
 public class Destroy : MonoBehaviour
 {
-    public event UnityAction DestroyResourse;
+    public event UnityAction<BotMovement> DestroyResourse;
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.TryGetComponent(out Resourse resource))
+        if (collision.TryGetComponent(out BotMovement botMovement))
         {
-            Destroy(resource.gameObject);
-            DestroyResourse?.Invoke();
+            DestroyResourse?.Invoke(botMovement);
         }
     }
 }

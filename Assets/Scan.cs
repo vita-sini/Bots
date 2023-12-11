@@ -26,7 +26,6 @@ public class Scan : MonoBehaviour
                 }
             }
         }
-        Debug.Log(_resourse.Count);
     }
 
     public List<Resourse> GiveResourse()

@@ -8,12 +8,12 @@ public class AvailableResources : MonoBehaviour
     [SerializeField] private TMP_Text _freeCountResourse;
     [SerializeField] private Base _base;
 
-    private void OnDisable()
+    private void OnEnable()
     {
         _base.CountFreeResourse += ChangedText;
     }
 
-    private void OnEnable()
+    private void OnDisable()
     {
         _base.CountFreeResourse -= ChangedText;
     }

@@ -9,6 +9,7 @@ using UnityEngine.Events;
 public class Base : MonoBehaviour
 {
     [SerializeField] private BotMovement[] _botMovement;
+    [SerializeField] private Destroy _destroy;
 
     private List<Resourse> _resourse = new List<Resourse>();
 
@@ -21,11 +22,26 @@ public class Base : MonoBehaviour
         _scan = GetComponent<Scan>();
     }
 
+    private void OnEnable()
+    {
+        _destroy.DestroyResourse += LiberationBot;
+    }
+
+    private void OnDisable()
+    {
+        _destroy.DestroyResourse -= LiberationBot;
+    }
+
     private void Update()
     {
         ReceiveResourse(_scan.GiveResourse());
 
         IsSetTarget();
+    }
+
+    private void LiberationBot(BotMovement botMovement)
+    {
+        botMovement.SetFree();
     }
 
     private void ReceiveResourse(List<Resourse> resourses)
@@ -37,7 +53,7 @@ public class Base : MonoBehaviour
                 if (!_resourse.Contains(resourse))
                 {
                     _resourse.Add(resourse);
-                    Debug.Log(_resourse.Count);
+
                     CountFreeResourse?.Invoke(_resourse.Count);
                 }
             }
@@ -50,20 +66,23 @@ public class Base : MonoBehaviour
         {
             for (int i = 0; i < _botMovement.Length; i++)
             {
-                if (resourse.IsBusy == false && _botMovement[i].IsFree == true)
+                if (_botMovement[i].IsFree == true)
                 {
-                    if (resourse != null)
+                    if(resourse.IsBusy == false)
                     {
-                        resourse.SetBusy();
-                        _botMovement[i].ApplyTaget(resourse.transform);
-                        _botMovement[i].Resourse = resourse;
+                        if (resourse != null)
+                        {
+                            resourse.SetBusy();
+                            _botMovement[i].ApplyTaget(resourse.transform);
+                            _botMovement[i].Resourse = resourse;
+                        }
+
+                        _resourse.Remove(resourse);
+
+                        CountFreeResourse?.Invoke(_resourse.Count);
+
+                        return true;
                     }
-
-                    _resourse.Remove(resourse);
-
-                    CountFreeResourse?.Invoke(_resourse.Count);
-
-                    return true;
                 }
             }
         }
